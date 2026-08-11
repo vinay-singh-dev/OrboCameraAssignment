@@ -22,6 +22,8 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.otaliastudios.cameraview.CameraView
 import com.otaliastudios.cameraview.controls.Audio
+import com.otaliastudios.cameraview.controls.Preview
+import com.otaliastudios.cameraview.filter.Filters
 
 @Composable
 fun CameraScreen() {
@@ -63,6 +65,8 @@ fun CameraScreen() {
                             ViewGroup.LayoutParams.MATCH_PARENT
                         )
                         audio = Audio.OFF
+                        preview = Preview.GL_SURFACE
+                        filter = Filters.BLACK_AND_WHITE.newInstance()
                         setLifecycleOwner(lifecycleOwner)
                     }
                 }
