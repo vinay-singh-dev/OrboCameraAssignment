@@ -6,6 +6,10 @@ The application uses the CameraView library to provide a camera preview with a r
 
 OpenCV is integrated to allow the user to manually select an area of the captured image and crop it. The cropped result is then displayed to the user.
 
+## APK
+
+[Download the latest APK](../../releases/latest)
+
 ## Features
 
 - Camera preview using CameraView
