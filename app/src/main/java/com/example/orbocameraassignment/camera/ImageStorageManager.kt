@@ -39,28 +39,48 @@ class ImageStorageManager(
 
         return try {
 
-            resolver.openOutputStream(imageUri)?.use { outputStream ->
+            val outputStream = resolver.openOutputStream(imageUri)
+                ?: run {
+                    resolver.delete(imageUri, null, null)
+                    return false
+                }
 
+            val compressed = outputStream.use {
                 bitmap.compress(
                     Bitmap.CompressFormat.JPEG,
                     90,
-                    outputStream
+                    it
                 )
-            } ?: false
+            }
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                contentValues.clear()
-                contentValues.put(
-                    MediaStore.Images.Media.IS_PENDING,
-                    0
-                )
-
-                resolver.update(
+            if (!compressed) {
+                resolver.delete(
                     imageUri,
-                    contentValues,
                     null,
                     null
                 )
+                return false
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val completedValues = ContentValues().apply {
+                    put(
+                        MediaStore.Images.Media.IS_PENDING,
+                        0
+                    )
+                }
+
+                val updatedRows = resolver.update(
+                    imageUri,
+                    completedValues,
+                    null,
+                    null
+                )
+
+                if (updatedRows == 0) {
+                    resolver.delete(imageUri, null, null)
+                    return false
+                }
             }
 
             true

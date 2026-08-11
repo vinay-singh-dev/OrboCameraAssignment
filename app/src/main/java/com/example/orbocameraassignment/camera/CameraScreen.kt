@@ -165,6 +165,7 @@ fun CameraScreen() {
                             .padding(bottom = 32.dp),
                         onClick = {
                             capturedBitmap = null
+                            saveError = false
                             screenState = CameraScreenState.CAMERA
                         }
                     ) {
