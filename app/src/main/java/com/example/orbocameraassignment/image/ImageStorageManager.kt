@@ -1,4 +1,4 @@
-package com.example.orbocameraassignment.camera
+package com.example.orbocameraassignment.image
 
 import android.content.ContentValues
 import android.content.Context
@@ -16,7 +16,7 @@ class ImageStorageManager(
 
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, filename)
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.MIME_TYPE, "com/example/orbocameraassignment/image/jpeg")
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 put(
