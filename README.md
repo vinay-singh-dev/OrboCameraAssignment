@@ -157,5 +157,4 @@ The following flows were tested:
 ## Known Limitations
 
 - Brightness and contrast adjustment are not implemented because they are optional bonus features.
-- The cropped image is displayed but is not separately saved to device storage.
 
