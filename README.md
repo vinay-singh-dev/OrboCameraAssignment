@@ -85,7 +85,6 @@ MainActivity.kt
 ## Image Processing Flow
 
 The image processing pipeline works as follows:
-```text
 
 CameraView
 ↓
