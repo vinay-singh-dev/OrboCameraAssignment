@@ -10,6 +10,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -146,6 +147,7 @@ fun CameraScreen() {
                     Button(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
                             .padding(bottom = 32.dp),
                         onClick = {
                             cameraController?.captureImage()
@@ -179,6 +181,7 @@ fun CameraScreen() {
                     Row(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
+                            .navigationBarsPadding()
                             .padding(bottom = 32.dp)
                     ) {
 
@@ -191,6 +194,7 @@ fun CameraScreen() {
                         }
 
                         Button(
+
                             modifier = Modifier.padding(start = 16.dp),
                             onClick = {
                                 capturedBitmap = null
@@ -222,6 +226,7 @@ fun CameraScreen() {
 
                         Button(
                             modifier = Modifier
+                                .navigationBarsPadding()
                                 .align(Alignment.BottomCenter)
                                 .padding(bottom = 32.dp),
                             onClick = {
@@ -256,6 +261,7 @@ fun CameraScreen() {
                         Button(
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
+                                .navigationBarsPadding()
                                 .padding(bottom = 32.dp),
                             enabled = selectedRect != null,
                             onClick = {
