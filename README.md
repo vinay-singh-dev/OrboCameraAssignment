@@ -117,7 +117,7 @@ The application uses `IS_PENDING` while writing the image and marks the file as 
 
 Captured images use JPEG format with 90% compression quality.
 
-The captured filtered image is persisted to device storage. The cropped image is generated and displayed but is not separately persisted because the assignment specifically requires the captured image to be saved and the cropped image to be displayed.
+The captured filtered image is persisted to device storage. The cropped image is generated and displayed to the user.
 
 ## Error Handling
 
