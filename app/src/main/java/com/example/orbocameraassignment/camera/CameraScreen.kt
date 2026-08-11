@@ -37,6 +37,9 @@ fun CameraScreen() {
 
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val imageStorageManager = remember {
+        ImageStorageManager(context)
+    }
 
     var hasCameraPermission by remember {
         mutableStateOf(
@@ -49,6 +52,10 @@ fun CameraScreen() {
 
     var capturedBitmap by remember {
         mutableStateOf<Bitmap?>(null)
+    }
+
+    var saveError by remember {
+        mutableStateOf(false)
     }
 
     var cameraController by remember {
@@ -100,6 +107,10 @@ fun CameraScreen() {
                             cameraView = this,
                             onImageCaptured = { bitmap ->
                                 capturedBitmap = bitmap
+                                val saved = imageStorageManager.saveImage(bitmap)
+
+                                saveError = !saved
+
                                 screenState = CameraScreenState.CAPTURED
                             }
                         )
@@ -137,6 +148,16 @@ fun CameraScreen() {
                             modifier = Modifier.fillMaxSize()
                         )
                     }
+
+                    if (saveError) {
+                        Text(
+                            text = "Failed to save image",
+                            modifier = Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(top = 32.dp)
+                        )
+                    }
+
 
                     Button(
                         modifier = Modifier
