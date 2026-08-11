@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -26,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.orbocameraassignment.image.CropSelection
+import com.example.orbocameraassignment.image.ImageProcessor
 import com.otaliastudios.cameraview.CameraView
 import com.otaliastudios.cameraview.controls.Audio
 import com.otaliastudios.cameraview.controls.Preview
@@ -42,6 +45,10 @@ fun CameraScreen() {
         ImageStorageManager(context)
     }
 
+    val imageProcessor = remember {
+        ImageProcessor()
+    }
+
     var hasCameraPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -52,6 +59,15 @@ fun CameraScreen() {
     }
 
     var capturedBitmap by remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+
+
+    var selectedRect by remember {
+        mutableStateOf<androidx.compose.ui.geometry.Rect?>(null)
+    }
+
+    var croppedBitmap by remember {
         mutableStateOf<Bitmap?>(null)
     }
 
@@ -160,19 +176,117 @@ fun CameraScreen() {
                     }
 
 
-                    Button(
+                    Row(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
-                            .padding(bottom = 32.dp),
-                        onClick = {
-                            capturedBitmap = null
-                            saveError = false
-                            screenState = CameraScreenState.CAMERA
-                        }
+                            .padding(bottom = 32.dp)
                     ) {
-                        Text("Retake")
+
+                        Button(
+                            onClick = {
+                                screenState = CameraScreenState.CROPPING
+                            }
+                        ) {
+                            Text("Crop")
+                        }
+
+                        Button(
+                            modifier = Modifier.padding(start = 16.dp),
+                            onClick = {
+                                capturedBitmap = null
+                                croppedBitmap = null
+                                selectedRect = null
+                                saveError = false
+                                screenState = CameraScreenState.CAMERA
+                            }
+                        ) {
+                            Text("Retake")
+                        }
                     }
                 }
+
+                CameraScreenState.CROPPED -> {
+
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+
+                        croppedBitmap?.let { bitmap ->
+
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = "Cropped image",
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        Button(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 32.dp),
+                            onClick = {
+                                capturedBitmap = null
+                                croppedBitmap = null
+                                selectedRect = null
+                                saveError = false
+                                screenState = CameraScreenState.CAMERA
+                            }
+                        ) {
+                            Text("Retake")
+                        }
+                    }
+                }
+
+                CameraScreenState.CROPPING -> {
+
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+
+                        capturedBitmap?.let { bitmap ->
+
+                            CropSelection(
+                                bitmap = bitmap,
+                                onSelectionComplete = { rect ->
+                                    selectedRect = rect
+                                }
+                            )
+                        }
+
+                        Button(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .padding(bottom = 32.dp),
+                            enabled = selectedRect != null,
+                            onClick = {
+
+                                val bitmap = capturedBitmap
+                                val rect = selectedRect
+
+                                if (
+                                    bitmap != null &&
+                                    rect != null &&
+                                    rect.width > 1f &&
+                                    rect.height > 1f
+                                ) {
+
+                                    croppedBitmap = imageProcessor.crop(
+                                        bitmap = bitmap,
+                                        x = rect.left.toInt(),
+                                        y = rect.top.toInt(),
+                                        width = rect.width.toInt(),
+                                        height = rect.height.toInt()
+                                    )
+
+                                    screenState = CameraScreenState.CROPPED
+                                }
+                            }
+                        ) {
+                            Text("Crop")
+                        }
+                    }
+                }
+
             }
         }
 
