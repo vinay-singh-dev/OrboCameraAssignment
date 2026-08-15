@@ -65,7 +65,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import com.example.orbocameraassignment.NativeImageProcessor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.orbocameraassignment.image.ImageStorageManager
@@ -79,9 +78,6 @@ fun CameraScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val nativeImageProcessor = remember {
-        NativeImageProcessor()
-    }
     val accent = Color(0xFF7C8CFF)
     val imageStorageManager = remember {
         ImageStorageManager(context)

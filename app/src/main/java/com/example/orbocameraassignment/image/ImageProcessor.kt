@@ -1,10 +1,6 @@
 package com.example.orbocameraassignment.image
 
 import android.graphics.Bitmap
-import org.opencv.android.Utils
-import org.opencv.core.Mat
-import org.opencv.core.Rect
-import androidx.core.graphics.createBitmap
 import com.example.orbocameraassignment.NativeImageProcessor
 
 class ImageProcessor {

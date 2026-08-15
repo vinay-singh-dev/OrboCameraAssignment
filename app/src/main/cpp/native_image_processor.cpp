@@ -45,7 +45,8 @@ Java_com_example_orbocameraassignment_NativeImageProcessor_crop(
             static_cast<int>(info.height),
             static_cast<int>(info.width),
             CV_8UC4,
-            inputPixels
+            inputPixels,
+            info.stride
     );
 
     cv::Rect cropRect(
@@ -117,11 +118,20 @@ Java_com_example_orbocameraassignment_NativeImageProcessor_crop(
         return nullptr;
     }
 
+    AndroidBitmapInfo outputInfo;
+
+    if (AndroidBitmap_getInfo(env, outputBitmap, &outputInfo)
+        != ANDROID_BITMAP_RESULT_SUCCESS) {
+        AndroidBitmap_unlockPixels(env, outputBitmap);
+        return nullptr;
+    }
+
     cv::Mat destination(
             height,
             width,
             CV_8UC4,
-            outputPixels
+            outputPixels,
+            outputInfo.stride
     );
 
     cropped.copyTo(destination);
@@ -130,6 +140,7 @@ Java_com_example_orbocameraassignment_NativeImageProcessor_crop(
 
     return outputBitmap;
 }
+
 
 extern "C"
 JNIEXPORT jobject JNICALL
@@ -162,7 +173,8 @@ Java_com_example_orbocameraassignment_NativeImageProcessor_adjustImage(
             static_cast<int>(info.height),
             static_cast<int>(info.width),
             CV_8UC4,
-            inputPixels
+            inputPixels,
+            info.stride
     );
 
     cv::Mat result;
@@ -234,11 +246,20 @@ Java_com_example_orbocameraassignment_NativeImageProcessor_adjustImage(
         return nullptr;
     }
 
+    AndroidBitmapInfo outputInfo;
+
+    if (AndroidBitmap_getInfo(env, outputBitmap, &outputInfo)
+        != ANDROID_BITMAP_RESULT_SUCCESS) {
+        AndroidBitmap_unlockPixels(env, outputBitmap);
+        return nullptr;
+    }
+
     cv::Mat destination(
-            static_cast<int>(info.height),
-            static_cast<int>(info.width),
+            static_cast<int>(outputInfo.height),
+            static_cast<int>(outputInfo.width),
             CV_8UC4,
-            outputPixels
+            outputPixels,
+            outputInfo.stride
     );
 
     result.copyTo(destination);
