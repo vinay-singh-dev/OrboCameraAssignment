@@ -74,6 +74,7 @@ import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.FilterBAndW
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.MaterialTheme
@@ -1020,54 +1021,125 @@ fun CameraScreen() {
 
                             Row(
                                 modifier = Modifier
-                                    .fillMaxWidth()
                                     .align(Alignment.BottomCenter)
                                     .navigationBarsPadding()
                                     .padding(
-                                        start = 20.dp,
-                                        end = 20.dp,
-                                        bottom = 32.dp
+                                        horizontal = 32.dp,
+                                        vertical = 24.dp
                                     )
+                                    .fillMaxWidth(),
+
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
 
-                                Button(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = {
-                                        screenState = CameraScreenState.EDITING
-                                    }
+                                // EDIT
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text("Edit")
+
+                                    IconButton(
+                                        onClick = {
+                                            screenState = CameraScreenState.EDITING
+                                        },
+
+                                        modifier = Modifier
+                                            .size(62.dp)
+                                            .background(
+                                                color = Color.Black.copy(alpha = 0.65f),
+                                                shape = CircleShape
+                                            )
+                                            .border(
+                                                width = 1.dp,
+                                                color = Color.White.copy(alpha = 0.35f),
+                                                shape = CircleShape
+                                            )
+                                    ) {
+
+                                        Icon(
+                                            imageVector = Icons.Default.Tune,
+                                            contentDescription = "Edit image",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                    }
+
+                                    Spacer(
+                                        modifier = Modifier.height(6.dp)
+                                    )
+
+                                    Text(
+                                        text = "Edit",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.Medium
+                                    )
                                 }
 
-                                Spacer(
-                                    modifier = Modifier.width(12.dp)
-                                )
-
-                                Button(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = {
-
-                                        val finalBitmap = editedBitmap ?: croppedBitmap
-
-                                        if (finalBitmap != null) {
-
-                                            val saved = imageStorageManager.saveImage(finalBitmap)
-
-                                            if (saved) {
-                                                screenState = CameraScreenState.CAMERA
-                                                capturedBitmap = null
-                                                croppedBitmap = null
-                                                editedBitmap = null
-                                                selectedRect = null
-                                                brightness = 0f
-                                                contrast = 1f
-                                            } else {
-                                                saveError = true
-                                            }
-                                        }
-                                    }
+                                // SAVE
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    Text("Save")
+
+                                    IconButton(
+                                        onClick = {
+
+                                            val finalBitmap =
+                                                editedBitmap ?: croppedBitmap
+
+                                            if (finalBitmap != null) {
+
+                                                val saved =
+                                                    imageStorageManager.saveImage(
+                                                        finalBitmap
+                                                    )
+
+                                                if (saved) {
+
+                                                    screenState =
+                                                        CameraScreenState.CAMERA
+
+                                                    capturedBitmap = null
+                                                    croppedBitmap = null
+                                                    editedBitmap = null
+                                                    selectedRect = null
+
+                                                    brightness = 0f
+                                                    contrast = 1f
+
+                                                    saveError = false
+
+                                                } else {
+
+                                                    saveError = true
+                                                }
+                                            }
+                                        },
+
+                                        modifier = Modifier
+                                            .size(62.dp)
+                                            .background(
+                                                color = Accent,
+                                                shape = CircleShape
+                                            )
+                                    ) {
+
+                                        Icon(
+                                            imageVector = Icons.Default.Save,
+                                            contentDescription = "Save image",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(28.dp)
+                                        )
+                                    }
+
+                                    Spacer(
+                                        modifier = Modifier.height(6.dp)
+                                    )
+
+                                    Text(
+                                        text = "Save",
+                                        color = Color.White,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
                                 }
                             }
 
