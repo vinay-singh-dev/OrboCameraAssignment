@@ -1,4 +1,6 @@
 #include <jni.h>
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
 
 extern "C"
 JNIEXPORT jstring JNICALL
