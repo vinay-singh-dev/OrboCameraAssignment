@@ -6,6 +6,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Slider
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.FilterBAndW
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.graphics.Color
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,6 +53,16 @@ import com.otaliastudios.cameraview.controls.Audio
 import com.otaliastudios.cameraview.controls.Preview
 import com.otaliastudios.cameraview.filter.Filters
 import kotlinx.coroutines.Dispatchers
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterBAndW
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.orbocameraassignment.image.ImageStorageManager
@@ -63,6 +85,10 @@ fun CameraScreen() {
 
     var processingJob by remember {
         mutableStateOf<Job?>(null)
+    }
+
+    var isBlackAndWhite by remember {
+        mutableStateOf(false)
     }
 
     var hasCameraPermission by remember {
@@ -144,7 +170,7 @@ fun CameraScreen() {
 
                         preview = Preview.GL_SURFACE
 
-                        filter = Filters.BLACK_AND_WHITE.newInstance()
+                        filter = Filters.NONE.newInstance()
 
                         setLifecycleOwner(lifecycleOwner)
 
@@ -158,6 +184,16 @@ fun CameraScreen() {
                         )
                     }
                 },
+
+                update = { cameraView ->
+
+                    cameraView.filter = if (isBlackAndWhite) {
+                        Filters.BLACK_AND_WHITE.newInstance()
+                    } else {
+                        Filters.NONE.newInstance()
+                    }
+                },
+
                 onRelease = {
                     cameraController?.clear()
                     cameraController = null
@@ -168,16 +204,114 @@ fun CameraScreen() {
 
                 CameraScreenState.CAMERA -> {
 
-                    Button(
+                    Row(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .navigationBarsPadding()
-                            .padding(bottom = 32.dp),
-                        onClick = {
-                            cameraController?.captureImage()
-                        }
+                            .padding(
+                                start = 32.dp,
+                                end = 32.dp,
+                                bottom = 28.dp
+                            )
+                            .fillMaxWidth(),
+
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text("Capture")
+
+                        // B&W FILTER
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+
+                            IconButton(
+                                onClick = {
+                                    isBlackAndWhite = !isBlackAndWhite
+                                },
+
+                                modifier = Modifier
+                                    .size(58.dp)
+                                    .background(
+                                        color = if (isBlackAndWhite) {
+                                            Color.White
+                                        } else {
+                                            Color.Black.copy(alpha = 0.55f)
+                                        },
+                                        shape = CircleShape
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.White.copy(alpha = 0.5f),
+                                        shape = CircleShape
+                                    )
+                            ) {
+
+                                Icon(
+                                    imageVector = Icons.Default.FilterBAndW,
+                                    contentDescription = "Black and white filter",
+                                    tint = if (isBlackAndWhite) {
+                                        Color.Black
+                                    } else {
+                                        Color.White
+                                    }
+                                )
+                            }
+
+                            Spacer(
+                                modifier = Modifier.height(6.dp)
+                            )
+
+                            Text(
+                                text = "B&W",
+                                color = Color.White
+                            )
+                        }
+
+                        // CAMERA SHUTTER
+                        IconButton(
+                            onClick = {
+                                cameraController?.captureImage()
+                            },
+
+                            modifier = Modifier.size(84.dp)
+                        ) {
+
+                            Box(
+                                modifier = Modifier
+                                    .size(76.dp)
+                                    .background(
+                                        Color.White,
+                                        CircleShape
+                                    )
+                                    .border(
+                                        width = 4.dp,
+                                        color = Color.White.copy(alpha = 0.5f),
+                                        shape = CircleShape
+                                    ),
+
+                                contentAlignment = Alignment.Center
+                            ) {
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .background(
+                                            Color.White,
+                                            CircleShape
+                                        )
+                                        .border(
+                                            width = 2.dp,
+                                            color = Color.Black.copy(alpha = 0.15f),
+                                            shape = CircleShape
+                                        )
+                                )
+                            }
+                        }
+
+                        // Keeps shutter centered
+                        Spacer(
+                            modifier = Modifier.size(58.dp)
+                        )
                     }
                 }
 
