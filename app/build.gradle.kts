@@ -25,6 +25,13 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                arguments += "-DANDROID_STL=c++_shared"
+            }
+        }
+
+
     }
 
     buildTypes {
@@ -42,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        prefab = true
     }
 }
 
