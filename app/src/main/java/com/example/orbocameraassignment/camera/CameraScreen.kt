@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,9 @@ import com.otaliastudios.cameraview.CameraView
 import com.otaliastudios.cameraview.controls.Audio
 import com.otaliastudios.cameraview.controls.Preview
 import com.otaliastudios.cameraview.filter.Filters
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.example.orbocameraassignment.image.ImageStorageManager
 
 
@@ -44,6 +48,7 @@ import com.example.orbocameraassignment.image.ImageStorageManager
 fun CameraScreen() {
 
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
     val imageStorageManager = remember {
         ImageStorageManager(context)
@@ -140,10 +145,7 @@ fun CameraScreen() {
                             cameraView = this,
                             onImageCaptured = { bitmap ->
                                 capturedBitmap = bitmap
-                                val saved = imageStorageManager.saveImage(bitmap)
-
-                                saveError = !saved
-
+                                saveError = false
                                 screenState = CameraScreenState.CAPTURED
                             }
                         )
@@ -269,6 +271,7 @@ fun CameraScreen() {
                         }
                     }
                 }
+
                 CameraScreenState.CROPPING -> {
 
                     Box(
@@ -329,6 +332,7 @@ fun CameraScreen() {
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
+                                .navigationBarsPadding()
                                 .padding(16.dp)
                         ) {
 
@@ -344,8 +348,21 @@ fun CameraScreen() {
 
                             Slider(
                                 value = brightness,
-                                onValueChange = {
-                                    brightness = it
+                                onValueChange = { value ->
+                                    brightness = value
+
+                                    scope.launch {
+
+                                        val result = withContext(Dispatchers.Default) {
+                                            imageProcessor.adjustImage(
+                                                bitmap = bitmap,
+                                                brightness = brightness.toDouble(),
+                                                contrast = contrast.toDouble()
+                                            )
+                                        }
+
+                                        editedBitmap = result
+                                    }
                                 },
                                 valueRange = -100f..100f
                             )
@@ -354,8 +371,21 @@ fun CameraScreen() {
 
                             Slider(
                                 value = contrast,
-                                onValueChange = {
-                                    contrast = it
+                                onValueChange = { value ->
+                                    contrast = value
+
+                                    scope.launch {
+
+                                        val result = withContext(Dispatchers.Default) {
+                                            imageProcessor.adjustImage(
+                                                bitmap = bitmap,
+                                                brightness = brightness.toDouble(),
+                                                contrast = contrast.toDouble()
+                                            )
+                                        }
+
+                                        editedBitmap = result
+                                    }
                                 },
                                 valueRange = 0.5f..2f
                             )
@@ -369,7 +399,6 @@ fun CameraScreen() {
                                     onClick = {
                                         brightness = 0f
                                         contrast = 1f
-
                                         editedBitmap = null
                                     }
                                 ) {
@@ -388,17 +417,77 @@ fun CameraScreen() {
                                 }
                             }
                         }
-
                     }
                 }
 
                 CameraScreenState.PREVIEW -> {
 
+                    val bitmap = editedBitmap ?: croppedBitmap
+
+                    if (bitmap != null) {
+
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+
+                            Image(
+                                bitmap = bitmap.asImageBitmap(),
+                                contentDescription = "Final image",
+                                modifier = Modifier.fillMaxSize()
+                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .navigationBarsPadding()
+                                    .padding(bottom = 32.dp)
+                            ) {
+
+                                Button(
+                                    onClick = {
+                                        screenState = CameraScreenState.EDITING
+                                    }
+                                ) {
+                                    Text("Edit")
+                                }
+
+                                Button(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 16.dp),
+                                    onClick = {
+
+                                        val finalBitmap = editedBitmap ?: croppedBitmap
+
+                                        if (finalBitmap != null) {
+
+                                            val saved = imageStorageManager.saveImage(finalBitmap)
+
+                                            if (saved) {
+                                                screenState = CameraScreenState.CAMERA
+                                                capturedBitmap = null
+                                                croppedBitmap = null
+                                                editedBitmap = null
+                                                selectedRect = null
+                                                brightness = 0f
+                                                contrast = 1f
+                                            } else {
+                                                saveError = true
+                                            }
+                                        }
+                                    }
+                                ) {
+                                    Text("Save")
+                                }
+
+                            }
+
+                        }
+                    }
                 }
-
             }
-
         }
+
 
     } else {
 
@@ -410,3 +499,4 @@ fun CameraScreen() {
         }
     }
 }
+
