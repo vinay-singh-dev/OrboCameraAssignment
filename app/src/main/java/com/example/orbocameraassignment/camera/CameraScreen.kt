@@ -11,30 +11,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.filled.FilterBAndW
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -58,34 +50,26 @@ import com.otaliastudios.cameraview.controls.Audio
 import com.otaliastudios.cameraview.controls.Preview
 import com.otaliastudios.cameraview.filter.Filters
 import kotlinx.coroutines.Dispatchers
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Contrast
-import androidx.compose.material.icons.filled.Crop
-import androidx.compose.material.icons.filled.FilterBAndW
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
-import androidx.media3.effect.Crop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.orbocameraassignment.image.ImageStorageManager
 import kotlinx.coroutines.Job
+import java.util.Locale
 
 
 @Composable
@@ -94,7 +78,7 @@ fun CameraScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
-    val Accent = Color(0xFF7C8CFF)
+    val accent = Color(0xFF7C8CFF)
     val imageStorageManager = remember {
         ImageStorageManager(context)
     }
@@ -146,11 +130,11 @@ fun CameraScreen() {
     }
 
     var brightness by remember {
-        mutableStateOf(0f)
+        mutableFloatStateOf(0f)
     }
 
     var contrast by remember {
-        mutableStateOf(1f)
+        mutableFloatStateOf(1f)
     }
 
     var editedBitmap by remember {
@@ -631,7 +615,7 @@ fun CameraScreen() {
                                 .size(68.dp)
                                 .background(
                                     color = if (selectedRect != null) {
-                                        Accent
+                                        accent
                                     } else {
                                         Color.Gray.copy(alpha = 0.55f)
                                     },
@@ -841,6 +825,7 @@ fun CameraScreen() {
 
                                         Text(
                                             text = String.format(
+                                                Locale.US,
                                                 "%.1fx",
                                                 contrast
                                             ),
@@ -1118,7 +1103,7 @@ fun CameraScreen() {
                                         modifier = Modifier
                                             .size(62.dp)
                                             .background(
-                                                color = Accent,
+                                                color = accent,
                                                 shape = CircleShape
                                             )
                                     ) {
