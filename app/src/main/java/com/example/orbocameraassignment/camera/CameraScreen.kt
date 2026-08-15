@@ -62,7 +62,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.FilterBAndW
+import androidx.compose.material.icons.filled.Refresh
+import androidx.media3.effect.Crop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.orbocameraassignment.image.ImageStorageManager
@@ -340,29 +343,100 @@ fun CameraScreen() {
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .navigationBarsPadding()
-                            .padding(bottom = 32.dp)
+                            .padding(
+                                horizontal = 32.dp,
+                                vertical = 24.dp
+                            )
+                            .fillMaxWidth(),
+
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
 
-                        Button(
-                            onClick = {
-                                screenState = CameraScreenState.CROPPING
-                            }
+                        // Crop
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Crop")
+
+                            IconButton(
+                                onClick = {
+                                    screenState = CameraScreenState.CROPPING
+                                },
+
+                                modifier = Modifier
+                                    .size(58.dp)
+                                    .background(
+                                        color = Color.Black.copy(alpha = 0.60f),
+                                        shape = CircleShape
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.White.copy(alpha = 0.35f),
+                                        shape = CircleShape
+                                    )
+                            ) {
+
+                                Icon(
+                                    imageVector = Icons.Default.Crop,
+                                    contentDescription = "Crop image",
+                                    tint = Color.White
+                                )
+                            }
+
+                            Spacer(
+                                modifier = Modifier.height(6.dp)
+                            )
+
+                            Text(
+                                text = "Crop",
+                                color = Color.White
+                            )
                         }
 
-                        Button(
-
-                            modifier = Modifier.padding(start = 16.dp),
-                            onClick = {
-                                capturedBitmap = null
-                                croppedBitmap = null
-                                selectedRect = null
-                                saveError = false
-                                screenState = CameraScreenState.CAMERA
-                            }
+                        // Retake
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Text("Retake")
+
+                            IconButton(
+                                onClick = {
+
+                                    capturedBitmap = null
+                                    croppedBitmap = null
+                                    selectedRect = null
+                                    saveError = false
+
+                                    screenState = CameraScreenState.CAMERA
+                                },
+
+                                modifier = Modifier
+                                    .size(58.dp)
+                                    .background(
+                                        color = Color.Black.copy(alpha = 0.60f),
+                                        shape = CircleShape
+                                    )
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.White.copy(alpha = 0.35f),
+                                        shape = CircleShape
+                                    )
+                            ) {
+
+                                Icon(
+                                    imageVector = Icons.Default.Refresh,
+                                    contentDescription = "Retake photo",
+                                    tint = Color.White
+                                )
+                            }
+
+                            Spacer(
+                                modifier = Modifier.height(6.dp)
+                            )
+
+                            Text(
+                                text = "Retake",
+                                color = Color.White
+                            )
                         }
                     }
                 }
