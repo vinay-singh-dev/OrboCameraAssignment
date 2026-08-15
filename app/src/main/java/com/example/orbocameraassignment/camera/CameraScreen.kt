@@ -65,12 +65,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.FilterBAndW
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
 import androidx.media3.effect.Crop
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -645,97 +654,348 @@ fun CameraScreen() {
 
                     if (bitmap != null) {
 
-                        Column(
+                        Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .navigationBarsPadding()
-                                .padding(16.dp)
+                                .background(Color(0xFF101114))
                         ) {
+
+                            // ------------------------------------------------------------
+                            // IMAGE
+                            // ------------------------------------------------------------
 
                             Image(
                                 bitmap = (editedBitmap ?: bitmap).asImageBitmap(),
+
                                 contentDescription = "Edited image",
+
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .weight(1f)
+                                    .padding(
+                                        top = 60.dp,
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 270.dp
+                                    )
+                                    .clip(
+                                        RoundedCornerShape(24.dp)
+                                    )
                             )
 
-                            Text("Brightness")
-
-                            Slider(
-                                value = brightness,
-                                onValueChange = { value ->
-
-                                    brightness = value
-
-                                    processingJob?.cancel()
-
-                                    processingJob = scope.launch {
-
-                                        val result = withContext(Dispatchers.Default) {
-                                            imageProcessor.adjustImage(
-                                                bitmap = bitmap,
-                                                brightness = brightness.toDouble(),
-                                                contrast = contrast.toDouble()
-                                            )
-                                        }
-
-                                        editedBitmap = result
-                                    }
-                                },
-                                valueRange = -100f..100f
-                            )
-
-                            Text("Contrast")
-
-                            Slider(
-                                value = contrast,
-                                onValueChange = { value ->
-
-                                    contrast = value
-
-                                    processingJob?.cancel()
-
-                                    processingJob = scope.launch {
-
-                                        val result = withContext(Dispatchers.Default) {
-                                            imageProcessor.adjustImage(
-                                                bitmap = bitmap,
-                                                brightness = brightness.toDouble(),
-                                                contrast = contrast.toDouble()
-                                            )
-                                        }
-
-                                        editedBitmap = result
-                                    }
-                                },
-                                valueRange = 0.5f..2f
-                            )
+                            // ------------------------------------------------------------
+                            // TITLE
+                            // ------------------------------------------------------------
 
                             Row(
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .align(Alignment.TopCenter)
+                                    .safeDrawingPadding()
+                                    .padding(top = 12.dp),
+
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
 
-                                Button(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = {
-                                        brightness = 0f
-                                        contrast = 1f
-                                        editedBitmap = null
-                                    }
-                                ) {
-                                    Text("Reset")
-                                }
+                                Icon(
+                                    imageVector = Icons.Default.Tune,
+                                    contentDescription = null,
+                                    tint = Color(0xFF9CA8FF)
+                                )
 
-                                Button(
+                                Spacer(
+                                    modifier = Modifier.width(8.dp)
+                                )
+
+                                Text(
+                                    text = "Edit Photo",
+                                    color = Color.White,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            // ------------------------------------------------------------
+                            // BOTTOM EDITOR PANEL
+                            // ------------------------------------------------------------
+
+                            Surface(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .align(Alignment.BottomCenter),
+
+                                shape = RoundedCornerShape(
+                                    topStart = 28.dp,
+                                    topEnd = 28.dp
+                                ),
+
+                                color = Color(0xFF1B1D22)
+                            ) {
+
+                                Column(
                                     modifier = Modifier
-                                        .weight(1f)
-                                        .padding(start = 8.dp),
-                                    onClick = {
-                                        screenState = CameraScreenState.PREVIEW
-                                    }
+                                        .fillMaxWidth()
+                                        .navigationBarsPadding()
+                                        .padding(
+                                            start = 20.dp,
+                                            end = 20.dp,
+                                            top = 18.dp,
+                                            bottom = 16.dp
+                                        )
                                 ) {
-                                    Text("Done")
+
+                                    // ----------------------------------------------------
+                                    // BRIGHTNESS
+                                    // ----------------------------------------------------
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment =
+                                            Alignment.CenterVertically
+                                    ) {
+
+                                        Icon(
+                                            imageVector = Icons.Default.WbSunny,
+                                            contentDescription = "Brightness",
+                                            tint = Color(0xFF9CA8FF)
+                                        )
+
+                                        Spacer(
+                                            modifier = Modifier.width(10.dp)
+                                        )
+
+                                        Text(
+                                            text = "Brightness",
+                                            color = Color.White,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+
+                                        Spacer(
+                                            modifier = Modifier.weight(1f)
+                                        )
+
+                                        Text(
+                                            text = brightness.toInt().toString(),
+                                            color = Color(0xFFB8BBC4)
+                                        )
+                                    }
+
+                                    Slider(
+                                        value = brightness,
+
+                                        onValueChange = { value ->
+
+                                            brightness = value
+
+                                            processingJob?.cancel()
+
+                                            processingJob = scope.launch {
+
+                                                val result =
+                                                    withContext(Dispatchers.Default) {
+
+                                                        imageProcessor.adjustImage(
+                                                            bitmap = bitmap,
+                                                            brightness =
+                                                                value.toDouble(),
+                                                            contrast =
+                                                                contrast.toDouble()
+                                                        )
+                                                    }
+
+                                                editedBitmap = result
+                                            }
+                                        },
+
+                                        valueRange = -100f..100f
+                                    )
+
+                                    // ----------------------------------------------------
+                                    // CONTRAST
+                                    // ----------------------------------------------------
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment =
+                                            Alignment.CenterVertically
+                                    ) {
+
+                                        Icon(
+                                            imageVector = Icons.Default.Contrast,
+                                            contentDescription = "Contrast",
+                                            tint = Color(0xFF9CA8FF)
+                                        )
+
+                                        Spacer(
+                                            modifier = Modifier.width(10.dp)
+                                        )
+
+                                        Text(
+                                            text = "Contrast",
+                                            color = Color.White,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
+
+                                        Spacer(
+                                            modifier = Modifier.weight(1f)
+                                        )
+
+                                        Text(
+                                            text = String.format(
+                                                "%.1fx",
+                                                contrast
+                                            ),
+                                            color = Color(0xFFB8BBC4)
+                                        )
+                                    }
+
+                                    Slider(
+                                        value = contrast,
+
+                                        onValueChange = { value ->
+
+                                            contrast = value
+
+                                            processingJob?.cancel()
+
+                                            processingJob = scope.launch {
+
+                                                val result =
+                                                    withContext(Dispatchers.Default) {
+
+                                                        imageProcessor.adjustImage(
+                                                            bitmap = bitmap,
+                                                            brightness =
+                                                                brightness.toDouble(),
+                                                            contrast =
+                                                                value.toDouble()
+                                                        )
+                                                    }
+
+                                                editedBitmap = result
+                                            }
+                                        },
+
+                                        valueRange = 0.5f..2f
+                                    )
+
+                                    Spacer(
+                                        modifier = Modifier.height(8.dp)
+                                    )
+
+                                    // ----------------------------------------------------
+                                    // RESET + DONE
+                                    // ----------------------------------------------------
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement =
+                                            Arrangement.spacedBy(12.dp)
+                                    ) {
+
+                                        Surface(
+                                            modifier = Modifier.weight(1f),
+
+                                            shape = RoundedCornerShape(18.dp),
+
+                                            color = Color(0xFF272A31),
+
+                                            onClick = {
+
+                                                processingJob?.cancel()
+
+                                                brightness = 0f
+                                                contrast = 1f
+                                                editedBitmap = null
+                                            }
+                                        ) {
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(
+                                                        vertical = 13.dp
+                                                    ),
+
+                                                horizontalArrangement =
+                                                    Arrangement.Center,
+
+                                                verticalAlignment =
+                                                    Alignment.CenterVertically
+                                            ) {
+
+                                                Icon(
+                                                    imageVector =
+                                                        Icons.Default.Refresh,
+
+                                                    contentDescription = "Reset",
+
+                                                    tint = Color.White
+                                                )
+
+                                                Spacer(
+                                                    modifier =
+                                                        Modifier.width(8.dp)
+                                                )
+
+                                                Text(
+                                                    text = "Reset",
+                                                    color = Color.White,
+                                                    fontWeight =
+                                                        FontWeight.SemiBold
+                                                )
+                                            }
+                                        }
+
+                                        Surface(
+                                            modifier = Modifier.weight(1f),
+
+                                            shape = RoundedCornerShape(18.dp),
+
+                                            color = Color(0xFF7C8CFF),
+
+                                            onClick = {
+
+                                                screenState =
+                                                    CameraScreenState.PREVIEW
+                                            }
+                                        ) {
+
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .padding(
+                                                        vertical = 13.dp
+                                                    ),
+
+                                                horizontalArrangement =
+                                                    Arrangement.Center,
+
+                                                verticalAlignment =
+                                                    Alignment.CenterVertically
+                                            ) {
+
+                                                Icon(
+                                                    imageVector =
+                                                        Icons.Default.Check,
+
+                                                    contentDescription = "Done",
+
+                                                    tint = Color.White
+                                                )
+
+                                                Spacer(
+                                                    modifier =
+                                                        Modifier.width(8.dp)
+                                                )
+
+                                                Text(
+                                                    text = "Done",
+                                                    color = Color.White,
+                                                    fontWeight =
+                                                        FontWeight.SemiBold
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }

@@ -42,6 +42,7 @@ android {
 dependencies {
     implementation("com.otaliastudios:cameraview:2.7.2")
     implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.material3)
     implementation(libs.androidx.media3.effect)
     implementation("org.opencv:opencv:4.13.0")
     implementation(platform(libs.androidx.compose.bom))
