@@ -7,6 +7,11 @@ import androidx.compose.material3.Slider
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.Crop
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -78,6 +83,7 @@ fun CameraScreen() {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val Accent = Color(0xFF7C8CFF)
     val imageStorageManager = remember {
         ImageStorageManager(context)
     }
@@ -503,12 +509,7 @@ fun CameraScreen() {
                             )
                         }
 
-                        Button(
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .navigationBarsPadding()
-                                .padding(bottom = 32.dp),
-                            enabled = selectedRect != null,
+                        IconButton(
                             onClick = {
 
                                 val bitmap = capturedBitmap
@@ -531,9 +532,31 @@ fun CameraScreen() {
 
                                     screenState = CameraScreenState.CROPPED
                                 }
-                            }
+                            },
+
+                            enabled = selectedRect != null,
+
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .navigationBarsPadding()
+                                .padding(bottom = 28.dp)
+                                .size(68.dp)
+                                .background(
+                                    color = if (selectedRect != null) {
+                                        Accent
+                                    } else {
+                                        Color.Gray.copy(alpha = 0.55f)
+                                    },
+                                    shape = CircleShape
+                                )
                         ) {
-                            Text("Crop")
+
+                            Icon(
+                                imageVector = Icons.Default.Crop,
+                                contentDescription = "Crop image",
+                                tint = Color.White,
+                                modifier = Modifier.size(30.dp)
+                            )
                         }
                     }
                 }
