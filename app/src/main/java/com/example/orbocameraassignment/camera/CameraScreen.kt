@@ -42,6 +42,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.orbocameraassignment.image.ImageStorageManager
+import kotlinx.coroutines.Job
 
 
 @Composable
@@ -56,6 +57,10 @@ fun CameraScreen() {
 
     val imageProcessor = remember {
         ImageProcessor()
+    }
+
+    var processingJob by remember {
+        mutableStateOf<Job?>(null)
     }
 
     var hasCameraPermission by remember {
@@ -349,9 +354,12 @@ fun CameraScreen() {
                             Slider(
                                 value = brightness,
                                 onValueChange = { value ->
+
                                     brightness = value
 
-                                    scope.launch {
+                                    processingJob?.cancel()
+
+                                    processingJob = scope.launch {
 
                                         val result = withContext(Dispatchers.Default) {
                                             imageProcessor.adjustImage(
@@ -372,9 +380,12 @@ fun CameraScreen() {
                             Slider(
                                 value = contrast,
                                 onValueChange = { value ->
+
                                     contrast = value
 
-                                    scope.launch {
+                                    processingJob?.cancel()
+
+                                    processingJob = scope.launch {
 
                                         val result = withContext(Dispatchers.Default) {
                                             imageProcessor.adjustImage(
