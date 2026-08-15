@@ -5,6 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.orbocameraassignment"
+    ndkVersion = "28.2.13676358"
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+        }
+    }
     compileSdk {
         version = release(37) {
 
@@ -19,6 +25,13 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                arguments += "-DANDROID_STL=c++_shared"
+            }
+        }
+
+
     }
 
     buildTypes {
@@ -36,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        prefab = true
     }
 }
 
