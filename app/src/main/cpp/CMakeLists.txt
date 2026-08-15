@@ -13,4 +13,5 @@ add_library(
 target_link_libraries(
         native_image_processor
         OpenCV::opencv_java4
+        jnigraphics
 )

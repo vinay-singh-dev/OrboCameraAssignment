@@ -1,5 +1,7 @@
 package com.example.orbocameraassignment
 
+import android.graphics.Bitmap
+
 class NativeImageProcessor {
 
     companion object {
@@ -9,5 +11,19 @@ class NativeImageProcessor {
         }
     }
 
-    external fun stringFromJNI(): String
+
+
+    external fun crop(
+        bitmap: Bitmap,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int
+    ): Bitmap
+
+    external fun adjustImage(
+        bitmap: Bitmap,
+        brightness: Double,
+        contrast: Double
+    ): Bitmap
 }
