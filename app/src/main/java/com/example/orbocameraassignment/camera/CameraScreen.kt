@@ -1,6 +1,9 @@
 package com.example.orbocameraassignment.camera
 
 import android.Manifest
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Slider
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.view.ViewGroup
@@ -82,6 +85,18 @@ fun CameraScreen() {
 
     var screenState by remember {
         mutableStateOf(CameraScreenState.CAMERA)
+    }
+
+    var brightness by remember {
+        mutableStateOf(0f)
+    }
+
+    var contrast by remember {
+        mutableStateOf(1f)
+    }
+
+    var editedBitmap by remember {
+        mutableStateOf<Bitmap?>(null)
     }
 
     val permissionLauncher = rememberLauncherForActivityResult(
@@ -224,24 +239,36 @@ fun CameraScreen() {
                             )
                         }
 
-                        Button(
+                        Row(
                             modifier = Modifier
-                                .navigationBarsPadding()
                                 .align(Alignment.BottomCenter)
-                                .padding(bottom = 32.dp),
-                            onClick = {
-                                capturedBitmap = null
-                                croppedBitmap = null
-                                selectedRect = null
-                                saveError = false
-                                screenState = CameraScreenState.CAMERA
-                            }
+                                .navigationBarsPadding()
+                                .padding(bottom = 32.dp)
                         ) {
-                            Text("Retake")
+
+                            Button(
+                                onClick = {
+                                    screenState = CameraScreenState.EDITING
+                                }
+                            ) {
+                                Text("Edit")
+                            }
+
+                            Button(
+                                modifier = Modifier.padding(start = 16.dp),
+                                onClick = {
+                                    capturedBitmap = null
+                                    croppedBitmap = null
+                                    selectedRect = null
+                                    saveError = false
+                                    screenState = CameraScreenState.CAMERA
+                                }
+                            ) {
+                                Text("Retake")
+                            }
                         }
                     }
                 }
-
                 CameraScreenState.CROPPING -> {
 
                     Box(
@@ -293,7 +320,84 @@ fun CameraScreen() {
                     }
                 }
 
+                CameraScreenState.EDITING -> {
+
+                    val bitmap = croppedBitmap
+
+                    if (bitmap != null) {
+
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(16.dp)
+                        ) {
+
+                            Image(
+                                bitmap = (editedBitmap ?: bitmap).asImageBitmap(),
+                                contentDescription = "Edited image",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                            )
+
+                            Text("Brightness")
+
+                            Slider(
+                                value = brightness,
+                                onValueChange = {
+                                    brightness = it
+                                },
+                                valueRange = -100f..100f
+                            )
+
+                            Text("Contrast")
+
+                            Slider(
+                                value = contrast,
+                                onValueChange = {
+                                    contrast = it
+                                },
+                                valueRange = 0.5f..2f
+                            )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+
+                                Button(
+                                    modifier = Modifier.weight(1f),
+                                    onClick = {
+                                        brightness = 0f
+                                        contrast = 1f
+
+                                        editedBitmap = null
+                                    }
+                                ) {
+                                    Text("Reset")
+                                }
+
+                                Button(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(start = 8.dp),
+                                    onClick = {
+                                        screenState = CameraScreenState.PREVIEW
+                                    }
+                                ) {
+                                    Text("Done")
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                CameraScreenState.PREVIEW -> {
+
+                }
+
             }
+
         }
 
     } else {

@@ -4,5 +4,7 @@ enum class CameraScreenState {
     CAMERA,
     CAPTURED,
     CROPPING,
-    CROPPED
+    CROPPED,
+    EDITING,
+    PREVIEW
 }
